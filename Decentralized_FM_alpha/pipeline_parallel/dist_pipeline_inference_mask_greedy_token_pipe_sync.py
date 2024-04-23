@@ -448,6 +448,9 @@ class DistGreedyInferenceMaskTokenPipeSync(DistGreedyInferenceTokePipeSync):
 
                 previous_emb = input_emb
         elif SPARSE:
+            print('SPARSE PASSING!!!!!!!!!!!!!')
+            import time
+            time.sleep(5000)
             # TODO: previous MLP block input as input to MLP sparse predictor
             pass
         else:

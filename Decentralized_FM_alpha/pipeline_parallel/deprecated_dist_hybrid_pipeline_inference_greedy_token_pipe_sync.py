@@ -252,6 +252,7 @@ class DistHybridGreedyInferenceTokePipeSync:
 
     def _forward_compute_prompt_seq(self, index, seq=None):
         print("Compute prompt seq micro-batch <", index, ">.")
+        print('HEYYYYYYY!!', flush=True)
         with torch.no_grad():
             if self.pp_rank == 0:
                 self.input_seq_emb[index] = self.gpu_layers['emb'](seq)

@@ -7,6 +7,9 @@ from torch.utils.data import DataLoader
 from trainer_mlp import train
 
 DATA = {
+    "1.5b": {
+        "c4": "../data/1.5b_c4",
+    },
     "175b": {
         "c4": "../data/175b_c4",
     },
@@ -19,9 +22,16 @@ DATA = {
   
 }
 
-MODEL_CHOICES = ['175b', '66b', '30b']
+MODEL_CHOICES = ['1.5b', '175b', '66b', '30b']
 DATA_CHOICES = ['c4']
 CONFIG = {
+    '1.5b':{
+        'num_layer': 24,
+        'ckt_storage': "bylayer",
+        'd':2048,
+        'h': 32,
+        'N':400000,
+    },
     '175b':{
         'num_layer': 95,
         'ckt_storage': "bylayer",
@@ -64,18 +74,20 @@ class BasicDataset(Dataset):
             y = torch.Tensor(self.Y[-idx])
         if y.sum()== 0:
             print("all zero y")
-            exit()
+            #exit()
         return x, y
+
+
 
 def get_data(args, l):
     if CONFIG[args.model]['ckt_storage'] == "bylayer":
-        path = f"{DATA[args.model][args.dataset]}/mlp_x_{l}.mmap"
+        path = "/home/ubuntu/DejaVu/Decentralized_FM_alpha/1.5b_c4/mlp_sp_x_"+ str(l) + ".mmap"
         print(f"Reading query from {path}")
-        query = np.array(np.memmap(path, dtype='float16', mode='r', shape=(400000,CONFIG[args.model]['d']))[: CONFIG[args.model]['N']])
+        query = np.array(np.memmap(path, dtype='float16', mode='r', shape=(300000,CONFIG[args.model]['d']))[: CONFIG[args.model]['N']])
     
-        path = f"{DATA[args.model][args.dataset]}/mlp_label_{l}.mmap"
+        path = "/home/ubuntu/DejaVu/Decentralized_FM_alpha/1.5b_c4/mlp_label_" + str(l) + ".mmap"
         print(f"Reading MLP label from {path}")
-        label = np.array(np.memmap(path, dtype='float16', mode='r', shape=(400000,CONFIG[args.model]['d'] * 4))[: CONFIG[args.model]['N']])
+        label = np.array(np.memmap(path, dtype='float16', mode='r', shape=(300000,CONFIG[args.model]['d'] * 4))[: CONFIG[args.model]['N']])
     
         return  query, label
 
@@ -100,7 +112,7 @@ def create_dataset(query, labels, args):
 
 def main():
     parser = argparse.ArgumentParser(description="PyTorch OPT Full Model")
-    parser.add_argument("--model", type=str, default="66b", choices = MODEL_CHOICES)
+    parser.add_argument("--model", type=str, default="1.5b", choices = MODEL_CHOICES)
     parser.add_argument("--dataset", type=str, default="c4", choices = DATA_CHOICES)
     parser.add_argument(
         "--L",
@@ -157,7 +169,7 @@ def main():
         query_layer,  train_loader, test_loader, args, device, verbal=True
     )
 
-    path = f"../checkpoint/opt-{args.model}-sparse-predictor/{args.dataset}_{args.k}_layer{args.L}_-{eval_result['Recall']:.4f}-{eval_result['Classifier Sparsity']:.0f}.pt"
+    path = "/home/ubuntu/DejaVu/sparse_predictor/pred_models/mlp_layer" + str(args.L) + ".pt"
     torch.save(best_model, path)
 
 

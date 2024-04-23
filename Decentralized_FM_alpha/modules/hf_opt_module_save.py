@@ -1,4 +1,5 @@
 from typing import List, Optional, Tuple, Union
+import time
 
 import os
 import numpy as np
@@ -417,39 +418,39 @@ class GPTBlock(OPTDecoderLayer):
         module.self_attn.layer_index = layer_index
         module.fp_i = 0
         module.fp_mlp_query = np.memmap(
-            f"/lustre/fsw/nvresearch/ldm/diffusion/data/175b_c4/mlp_sp_x_{module.layer_index}.mmap",
+            f"1.5b_c4_2/mlp_sp_x_{module.layer_index}.mmap",
             dtype="float16",
             mode="w+",
             shape=(
-                400000,
+                300000,
                 config.hidden_size,
             ),
         )
         module.fp_att_query = np.memmap(
-            f"/lustre/fsw/nvresearch/ldm/diffusion/data/175b_c4/att_sp_x_{module.layer_index}.mmap",
+            f"1.5b_c4_2/att_sp_x_{module.layer_index}.mmap",
             dtype="float16",
             mode="w+",
             shape=(
-                400000,
+                300000,
                 config.hidden_size,
             ),
         )
         module.fp_label = np.memmap(
-            f"/lustre/fsw/nvresearch/ldm/diffusion/visualization/175b/mlp_label_{module.layer_index}.mmap",
+            f"1.5b_c4_2/mlp_label_{module.layer_index}.mmap",
             dtype="float16",
             mode="w+",
             shape=(
-                400000,
+                300000,
                 config.hidden_size * 4,
             ),
         )
         module.self_attn.fp_i = 0
         module.self_attn.fp_label = np.memmap(
-            f"/lustre/fsw/nvresearch/ldm/diffusion/visualization/175b/score_norm_{module.layer_index}.mmap",
+            f"1.5b_c4_2/score_norm_{module.layer_index}.mmap",
             dtype="float16",
             mode="w+",
             shape=(
-                400000,
+                300000,
                 config.num_attention_heads,
             ),
         )
@@ -457,6 +458,8 @@ class GPTBlock(OPTDecoderLayer):
         return module
 
     def forward(self, x: torch.Tensor, layer_past=None, mask=None) -> torch.Tensor:
+        print('in forward', flush=True)
+        print(x.cpu(), flush=True)
         if layer_past is not None:
             past_length = layer_past[0].size(2)
         else:

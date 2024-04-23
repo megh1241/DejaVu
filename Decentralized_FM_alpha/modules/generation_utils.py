@@ -11,9 +11,9 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 import torch
 from torch import nn
 
-from transformers.generation_beam_constraints import Constraint, DisjunctiveConstraint, PhrasalConstraint
-from transformers.generation_beam_search import BeamScorer, BeamSearchScorer, ConstrainedBeamSearchScorer
-from transformers.generation_logits_process import (
+from transformers.generation.beam_constraints import Constraint, DisjunctiveConstraint, PhrasalConstraint
+from transformers.generation.beam_search import BeamScorer, BeamSearchScorer, ConstrainedBeamSearchScorer
+from transformers.generation.logits_process import (
     EncoderNoRepeatNGramLogitsProcessor,
     ExponentialDecayLengthPenalty,
     ForcedBOSTokenLogitsProcessor,
@@ -32,7 +32,7 @@ from transformers.generation_logits_process import (
     TopPLogitsWarper,
     TypicalLogitsWarper,
 )
-from transformers.generation_stopping_criteria import (
+from transformers.generation.stopping_criteria import (
     MaxLengthCriteria,
     MaxTimeCriteria,
     StoppingCriteria,
